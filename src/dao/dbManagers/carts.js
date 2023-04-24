@@ -5,7 +5,7 @@ export default class CartManager {
 
   getCarts = async () => {
     try {
-      const carts = await cartsModel.find();
+      const carts = await cartsModel.find().lean().limit(5);
       return carts;
     } catch (error) {
       console.log(error);

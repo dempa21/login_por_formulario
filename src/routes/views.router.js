@@ -1,11 +1,14 @@
 import { Router } from "express";
 import ProductManager from "../dao/dbManagers/products.js";
+import CartManager from "../dao/dbManagers/carts.js";
 import MessageManager from "../dao/dbManagers/messages.js";
 import { checkLogged, checkLogin } from "../middlewares/auth.js";
 import productsModel from "../dao/models/products.js";
+import cartsModel from "../dao/models/carts.js";
 
 const router = Router();
 const productManager = new ProductManager();
+const cartManager = new CartManager();
 const messageManager = new MessageManager();
 
 router.get("/", async (req, res) => {
@@ -34,6 +37,21 @@ router.get("/products2", async (req, res) => {
   res.render("home2", {products2 , user});
 });
   
+router.get("/carts", async (req, res) => {
+
+  const { limit, page } = req.query;
+  const carts = await cartManager.getCarts();
+  if(limit) {
+  const limitedCarts = carts.slice(0, limit);
+
+  return  res.render("home", limitedCarts); }
+  
+  const user = await req.session.user;
+  console.log(user)
+  //res.render("home", { products, style: "styles.css", title: "Products"});
+  res.render("carts", {carts , user});
+  
+});
 
 router.get("/realtimeproducts", async (req, res) => {
   const products = await productManager.getProducts();
